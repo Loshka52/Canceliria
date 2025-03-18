@@ -1,0 +1,67 @@
+/* Основные стили для body */
+body {
+    background-color: #e0f7fa; /* Светлый бирюзовый фон */
+    font-family: 'Arial', sans-serif; /* Шрифт */
+    color: #333; /* Цвет текста */
+}
+
+/* Стили для навигационного меню */
+.navbar {
+    background-color: #00796b; /* Темный бирюзовый для навигационного меню */
+    border-bottom: 2px solid #004d40; /* Темный бордер */
+}
+
+.navbar-brand {
+    font-size: 1.5rem; /* Размер шрифта для названия */
+    font-weight: bold; /* Жирный шрифт */
+    color: #ffffff; /* Белый цвет текста */
+}
+
+.nav-link {
+    color: #ffffff; /* Белый цвет текста для ссылок */
+    transition: color 0.3s; /* Плавный переход цвета */
+}
+
+    .nav-link:hover {
+        color: #ffd54f; /* Цвет при наведении на ссылки */
+    }
+
+/* Стили для основного содержимого */
+.container {
+    margin-top: 20px; /* Отступ сверху */
+}
+
+/* Стили для подвала */
+.footer {
+    background-color: #004d40; /* Темный бирюзовый для подвала */
+    color: #ffffff; /* Белый цвет текста в подвале */
+    padding: 10px 0; /* Отступ сверху и снизу */
+    text-align: center; /* Центрирование текста */
+}
+
+/* Стили для кнопок */
+.btn-success {
+    background-color: #009688; /* Бирюзовый цвет для кнопок */
+    border-color: #00796b; /* Темный бирюзовый для границы кнопок */
+    transition: background-color 0.3s, border-color 0.3s; /* Плавный переход */
+}
+
+    .btn-success:hover {
+        background-color: #00796b; /* Темный бирюзовый при наведении */
+        border-color: #004d40; /* Темный бордер при наведении */
+    }
+
+/* Стили для заголовков */
+h1, h2, h3 {
+    color: #004d40; /* Темный бирюзовый для заголовков */
+    margin-bottom: 15px; /* Отступ снизу */
+}
+
+/* Стили для ссылок в подвале */
+.footer a {
+    color: #ffd54f; /* Цвет ссылок в подвале */
+}
+
+    .footer a:hover {
+        text-decoration: underline; /* Подчеркивание при наведении */
+    }
