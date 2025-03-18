@@ -2,7 +2,21 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Ваш файл стилей -->
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <div class="container text-center my-5">
+        <h1 class="display-4 text-primary">Канцелярский магазин</h1>
+        <img src="https://avatars.mds.yandex.net/get-altay/6065996/2a00000180045822e7bf478fb9cd4eb232b6/XXXL" alt="Картинка канцелярских товаров" class="custom-img"> <!-- Добавьте класс для стилизации -->
+        <p class="lead text-muted">Добро пожаловать в наш магазин! Здесь вы найдете все необходимое для учебы и работы.</p>
+        <p><a class="btn btn-success btn-lg" href="https://learn.microsoft.com/aspnet/core" role="button">Узнать больше</a></p>
+    </div>
+</body>
+</html>
