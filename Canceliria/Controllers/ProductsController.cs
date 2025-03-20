@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -48,24 +48,31 @@ namespace Canceliria.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
             return View();
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId,Images")] Product product)
+        public async Task<IActionResult> Create([Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId")] Product product, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await imageFile.CopyToAsync(memoryStream);
+                        product.Images = memoryStream.ToArray(); // Сохраняем изображение как массив байтов
+                    }
+                }
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
         }
 
@@ -82,16 +89,14 @@ namespace Canceliria.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
         }
 
         // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId,Images")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId,Images")] Product product, IFormFile imageFile)
         {
             if (id != product.ProductId)
             {
@@ -102,6 +107,15 @@ namespace Canceliria.Controllers
             {
                 try
                 {
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await imageFile.CopyToAsync(memoryStream);
+                            product.Images = memoryStream.ToArray(); // Обновляем изображение как массив байтов
+                        }
+                    }
+
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
@@ -118,7 +132,7 @@ namespace Canceliria.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
         }
 
@@ -141,7 +155,7 @@ namespace Canceliria.Controllers
             return View(product);
         }
 
-        // POST: Products/Delete/5
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -150,9 +164,9 @@ namespace Canceliria.Controllers
             if (product != null)
             {
                 _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

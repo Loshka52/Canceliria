@@ -8,6 +8,7 @@
     body {
         background-color: #f8f9fa; /* Светлый фон */
     }
+
     .form-container {
         background-color: #ffffff; /* Белый фон для формы */
         border-radius: 8px; /* Скругленные углы */
@@ -22,9 +23,10 @@
 <hr />
 <div class="row justify-content-center">
     <div class="col-md-6 form-container">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <!-- Убедитесь, что добавили enctype -->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
+
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" placeholder="Введите название продукта" />
@@ -58,8 +60,8 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Images" class="control-label"></label>
-                <input asp-for="Images" class="form-control" placeholder="Введите URL изображения" />
+                <label>Изображение</label>
+                <input type="file" name="imageFile" class="form-control" accept="image/*" /> <!-- Поле для загрузки изображения -->
                 <span asp-validation-for="Images" class="text-danger"></span>
             </div>
 
@@ -75,5 +77,8 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+
