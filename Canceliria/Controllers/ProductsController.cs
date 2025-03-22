@@ -1,12 +1,11 @@
-﻿using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Canceliria.Data;
+﻿using Canceliria.Data;
 using Canceliria.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Canceliria.Controllers
 {
@@ -22,27 +21,7 @@ namespace Canceliria.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Products.Include(p => p.Category);
-            return View(await applicationDbContext.ToListAsync());
-        }
-
-        // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            return View(await _context.Products.Include(p => p.Category).ToListAsync());
         }
 
         // GET: Products/Create
@@ -55,15 +34,15 @@ namespace Canceliria.Controllers
         // POST: Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId")] Product product, IFormFile imageFile)
+        public async Task<IActionResult> Create([Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId")] Product product, IFormFile Images)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (imageFile != null && imageFile.Length > 0)
+                if (Images != null && Images.Length > 0)
                 {
                     using (var memoryStream = new MemoryStream())
                     {
-                        await imageFile.CopyToAsync(memoryStream);
+                        await Images.CopyToAsync(memoryStream);
                         product.Images = memoryStream.ToArray(); // Сохраняем изображение как массив байтов
                     }
                 }
@@ -72,23 +51,20 @@ namespace Canceliria.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
-            return View(product);
+            return View(product); // Вернуть представление с ошибками валидации
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
         }
@@ -96,23 +72,23 @@ namespace Canceliria.Controllers
         // POST: Products/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId,Images")] Product product, IFormFile imageFile)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId")] Product product, IFormFile Images)
         {
             if (id != product.ProductId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 try
                 {
-                    if (imageFile != null && imageFile.Length > 0)
+                    if (Images != null && Images.Length > 0)
                     {
                         using (var memoryStream = new MemoryStream())
                         {
-                            await imageFile.CopyToAsync(memoryStream);
-                            product.Images = memoryStream.ToArray(); // Обновляем изображение как массив байтов
+                            await Images.CopyToAsync(memoryStream);
+                            product.Images = memoryStream.ToArray(); // Сохраняем изображение как массив байтов
                         }
                     }
 
@@ -132,42 +108,31 @@ namespace Canceliria.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", product.CategoryId);
-            return View(product);
+            return View(product); // Вернуть представление с ошибками валидации
         }
 
-        // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Products/Details/5
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.ProductId == id);
+            var product = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(m => m.ProductId == id);
             if (product == null)
             {
                 return NotFound();
             }
-
             return View(product);
         }
 
-        
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        // GET: Products/GetImage/5
+        public IActionResult GetImage(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
+            var product = _context.Products.Find(id);
+            if (product?.Images != null)
             {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
+                return File(product.Images, "image/jpeg"); // Убедитесь, что тип изображения соответствует загруженному изображению
             }
-
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
 
         private bool ProductExists(int id)

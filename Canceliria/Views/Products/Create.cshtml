@@ -1,79 +1,175 @@
 ﻿@model Canceliria.Models.Product
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Product";
 }
 
 <style>
-    body {
-        background-color: #f8f9fa; /* Светлый фон */
+    .container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #f8f9fa; /* Light gray background */
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .form-container {
-        background-color: #ffffff; /* Белый фон для формы */
-        border-radius: 8px; /* Скругленные углы */
-        padding: 20px; /* Отступы внутри формы */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень для глубины */
+    h1 {
+        text-align: center;
+        color: #343a40; /* Dark gray heading */
+        font-weight: 300;
+        margin-bottom: 30px;
+        letter-spacing: 0.05em;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        padding: 12px;
+        font-size: 16px;
+        color: #495057;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+        .form-control:focus {
+            border-color: #80bdff; /* Focused input border color */
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+    .form-control-file {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    label {
+        font-weight: 500; /* Slightly bolder label */
+        color: #495057;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .text-danger {
+        font-size: 14px;
+        color: #dc3545 !important; /* Red error text */
+    }
+
+    .btn-primary {
+        background-color: #007bff; /* Primary button color */
+        border-color: #007bff;
+        color: #fff;
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+        .btn-primary:hover {
+            background-color: #0069d9; /* Darker primary button on hover */
+            border-color: #0062cc;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d; /* Secondary button color */
+        border-color: #6c757d;
+        color: #fff;
+        padding: 10px 18px;
+        font-size: 16px;
+        border-radius: 5px;
+        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268; /* Darker secondary button on hover */
+            border-color: #545b62;
+        }
+
+    select.form-control {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="currentColor" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right .75rem center;
+        background-size: 8px 10px;
+        padding-right: 2.5rem;
+    }
+
+    /* Smaller screens */
+    @@media (max-width: 576px) {
+        .container {
+            padding: 15px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        .form-control,
+        .form-control-file,
+        .btn {
+            font-size: 1rem;
+            padding: 10px;
+        }
     }
 </style>
 
-<h1 class="text-center">Создать продукт</h1>
+<div class="container">
+    <h1>Создать продукт</h1>
 
-<h4 class="text-primary text-center">Информация о продукте</h4>
-<hr />
-<div class="row justify-content-center">
-    <div class="col-md-6 form-container">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <!-- Убедитесь, что добавили enctype -->
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="form-group">
+            <label asp-for="Name">Название продукта</label>
+            <input asp-for="Name" class="form-control" placeholder="Введите название продукта" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" placeholder="Введите название продукта" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+        <div class="form-group">
+            <label asp-for="Description">Описание продукта</label>
+            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Введите описание продукта"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control" placeholder="Введите описание продукта"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
+        <div class="form-group">
+            <label asp-for="Price">Цена продукта</label>
+            <input asp-for="Price" class="form-control" placeholder="Введите цену продукта" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" placeholder="Введите цену" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
+        <div class="form-group">
+            <label asp-for="StockQuantity">Количество на складе</label>
+            <input asp-for="StockQuantity" class="form-control" placeholder="Введите количество на складе" />
+            <span asp-validation-for="StockQuantity" class="text-danger"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="StockQuantity" class="control-label"></label>
-                <input asp-for="StockQuantity" class="form-control" placeholder="Введите количество на складе" />
-                <span asp-validation-for="StockQuantity" class="text-danger"></span>
-            </div>
+        <div class="form-group">
+            <label asp-for="CategoryId">Категория</label>
+            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId">
+                <option value="">Выберите категорию</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId">
-                    <option value="">Выберите категорию</option>
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
+        <div class="form-group">
+            <label for="Images">Загрузить изображение</label>
+            <input type="file" name="Images" class="form-control-file" accept="image/*" />
+            @*  This next line is causing a problem. * It tries to show the entire image collection for ONE product being created which makes no sense and it's not defined.
+            *   If you want to be able to upload MULTIPLE images at once, you will need to change the "Images" property to be a collection (like a List or Array).   Then you need to adjust your controller and the rest of your model to handle that.
 
-            <div class="form-group">
-                <label>Изображение</label>
-                <input type="file" name="imageFile" class="form-control" accept="image/*" /> <!-- Поле для загрузки изображения -->
-                <span asp-validation-for="Images" class="text-danger"></span>
-            </div>
+            *@
+            @*<span asp-validation-for="Images" class="text-danger"></span>*@
+        </div>
 
-            <div class="form-group text-center">
-                <input type="submit" value="Создать" class="btn btn-success btn-lg" />
-            </div>
-        </form>
+        <button type="submit" class="btn btn-primary btn-block">Создать продукт</button>
+    </form>
+
+    <div class="text-center mt-3">
+        <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
     </div>
-</div>
-
-<div class="text-center">
-    <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
 </div>
 
 @section Scripts {
@@ -81,4 +177,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
