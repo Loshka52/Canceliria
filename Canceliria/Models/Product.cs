@@ -11,7 +11,7 @@
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
-        public byte[]? Images { get; set; }
+        public byte[] Images { get; set; }
     }
 
 

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace Canceliria.Controllers
 {
@@ -19,9 +20,16 @@ namespace Canceliria.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Products.Include(p => p.Category).ToListAsync());
+            IQueryable<Product> products = _context.Products.Include(p => p.Category);
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(p => p.Name.Contains(searchString) || p.Description.Contains(searchString));
+            }
+
+            return View(await products.ToListAsync());
         }
 
         // GET: Products/Create
@@ -36,7 +44,7 @@ namespace Canceliria.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId")] Product product, IFormFile Images)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 if (Images != null && Images.Length > 0)
                 {
@@ -79,7 +87,7 @@ namespace Canceliria.Controllers
                 return NotFound();
             }
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -139,5 +147,43 @@ namespace Canceliria.Controllers
         {
             return _context.Products.Any(e => e.ProductId == id);
         }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(m => m.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
+        // POST: Products/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+
+
+
+
+        }
     }
 }
+
