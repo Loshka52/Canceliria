@@ -44,7 +44,7 @@ namespace Canceliria.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,Name,Description,Price,StockQuantity,CategoryId")] Product product, IFormFile Images)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 if (Images != null && Images.Length > 0)
                 {
